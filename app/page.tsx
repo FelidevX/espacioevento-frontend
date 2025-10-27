@@ -1,36 +1,29 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapPin, Users, Calendar, CreditCard, Shield, TrendingUp, ArrowRight, Check, Clock, House } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import Header from '@/components/Header';
 
 export default function Home() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('organizador');
+  const [salas, setSalas] = useState<any[]>([]);
+  const [loadingSalas, setLoadingSalas] = useState(true);
 
-  const salas = [
-    {
-      nombre: "Salón Imperial",
-      capacidad: "200-300 personas",
-      tamaño: "450 m²",
-      precio: "$150.000/día",
-      imagen: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
-      estado: "disponible"
-    },
-    {
-      nombre: "Terraza Jardín",
-      capacidad: "80-150 personas",
-      tamaño: "320 m²",
-      precio: "$95.000/día",
-      imagen: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
-      estado: "disponible"
-    },
-    {
-      nombre: "Sala Ejecutiva",
-      capacidad: "20-50 personas",
-      tamaño: "120 m²",
-      precio: "$45.000/día",
-      imagen: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&h=600&fit=crop",
-      estado: "disponible"
+  useEffect(() => {
+    async function fetchSalas() {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/salas`);
+        const data = await res.json();
+        setSalas(data);
+      } catch (err) {
+        setSalas([]);
+      } finally {
+        setLoadingSalas(false);
+      }
     }
-  ];
+    fetchSalas();
+  }, []);
 
   const beneficios = {
     organizador: [
@@ -49,26 +42,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm shadow-sm z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <Calendar className="text-white" size={24} />
-            </div>
-            <span className="text-2xl font-bold text-slate-800">Espacio Evento</span>
-          </div>
-          <div className="hidden md:flex gap-6 items-center">
-            <a href="#salas" className="text-slate-600 hover:text-blue-600 transition">Salas</a>
-            <a href="#como-funciona" className="text-slate-600 hover:text-blue-600 transition">Cómo Funciona</a>
-            <a href="#precios" className="text-slate-600 hover:text-blue-600 transition">Precios</a>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition">
-              Iniciar Sesión
-            </button>
-          </div>
-        </div>
-      </nav>
-
+      <Header />
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <div className="max-w-7xl mx-auto">
@@ -81,7 +55,7 @@ export default function Home() {
                 Organiza eventos de forma <span className="text-blue-600">profesional</span>
               </h1>
               <p className="text-xl text-slate-600 mb-8 leading-relaxed">
-                Sistema completo de gestión de eventos con control de asistentes, pagos integrados y arriendo de salas. Todo en un solo lugar.
+                Sistema completo de gestión de eventos con control de asistentes y arriendo de salas. Todo en un solo lugar.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30">
@@ -186,46 +160,55 @@ export default function Home() {
               Espacios equipados para todo tipo de eventos
             </p>
           </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {salas.map((sala, index) => (
-              <div 
-                key={index}
-                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 border border-slate-200"
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img 
-                    src={sala.imagen} 
-                    alt={sala.nombre}
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                    Disponible
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-2xl font-bold mb-3 text-slate-800">{sala.nombre}</h3>
-                  <div className="space-y-3 text-slate-600 mb-4">
-                    <div className="flex items-center gap-2">
-                      <Users size={18} className="text-blue-600" />
-                      <span>{sala.capacidad}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin size={18} className="text-blue-600" />
-                      <span>{sala.tamaño}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CreditCard size={18} className="text-blue-600" />
-                      <span className="font-semibold text-slate-800">Gestión cómoda y centralizada</span>
+          {loadingSalas ? (
+            <div className="text-center text-slate-500 py-12">Cargando salas...</div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-8">
+              {salas.map((sala, index) => (
+                <div 
+                  key={sala.id_sala}
+                  className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 border border-slate-200"
+                >
+                  <div className="relative h-64 overflow-hidden">
+                    <img 
+                      src={sala.imagen || "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop"} 
+                      alt={sala.nombre}
+                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-semibold ${
+                      sala.estado === "disponible" ? "bg-green-500 text-white" : "bg-slate-400 text-white"
+                    }`}>
+                      {sala.estado.charAt(0).toUpperCase() + sala.estado.slice(1)}
                     </div>
                   </div>
-                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition">
-                    Reservar Ahora
-                  </button>
+                  <div className="p-6">
+                    <h3 className="text-2xl font-bold mb-3 text-slate-800">{sala.nombre}</h3>
+                    <div className="space-y-3 text-slate-600 mb-4">
+                      <div className="flex items-center gap-2">
+                        <Users size={18} className="text-blue-600" />
+                        <span>{sala.capacidad} personas</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin size={18} className="text-blue-600" />
+                        <span>{sala.ubicación}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CreditCard size={18} className="text-blue-600" />
+                        <span className="font-semibold text-slate-800">Gestión cómoda y centralizada</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-blue-600 font-bold text-lg">${sala.precio_arriendo}</span>
+                        <span className="text-slate-500 text-sm">/día</span>
+                      </div>
+                    </div>
+                    <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition cursor-pointer" disabled={sala.estado !== "disponible"}>
+                      {sala.estado === "disponible" ? "Reservar Ahora" : "No disponible"}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
