@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=http://localhost:4000/api
+        - NEXT_PUBLIC_API_URL=http://195.26.251.109:4000/api
     container_name: espacioevento-frontend
     ports:
       - "4001:4001"
