@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://195.26.251.109:4000/api
+    container_name: espacioevento-frontend
+    ports:
+      - "4001:4001"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    networks:
+      - espacioevento-network
+
+networks:
+  espacioevento-network:
+    driver: bridge
