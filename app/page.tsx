@@ -1,9 +1,23 @@
-'use client';
-import React, { useState } from 'react';
-import { MapPin, Users, Calendar, CreditCard, Shield, TrendingUp, ArrowRight, Check, Clock, House } from 'lucide-react';
+"use client";
+import React, { useState } from "react";
+import {
+  MapPin,
+  Users,
+  Calendar,
+  CreditCard,
+  Shield,
+  TrendingUp,
+  ArrowRight,
+  Check,
+  Clock,
+  House,
+} from "lucide-react";
+import Header from "@/components/Header";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState('organizador');
+  const [activeTab, setActiveTab] = useState<"organizador" | "asistente">(
+    "organizador"
+  );
 
   const salas = [
     {
@@ -11,63 +25,80 @@ export default function Home() {
       capacidad: "200-300 personas",
       tamaño: "450 m²",
       precio: "$150.000/día",
-      imagen: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
-      estado: "disponible"
+      imagen:
+        "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
+      estado: "disponible",
     },
     {
       nombre: "Terraza Jardín",
       capacidad: "80-150 personas",
       tamaño: "320 m²",
       precio: "$95.000/día",
-      imagen: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
-      estado: "disponible"
+      imagen:
+        "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
+      estado: "disponible",
     },
     {
       nombre: "Sala Ejecutiva",
       capacidad: "20-50 personas",
       tamaño: "120 m²",
       precio: "$45.000/día",
-      imagen: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&h=600&fit=crop",
-      estado: "disponible"
-    }
+      imagen:
+        "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&h=600&fit=crop",
+      estado: "disponible",
+    },
   ];
 
   const beneficios = {
     organizador: [
-      { icon: Calendar, title: "Gestiona tus Eventos", desc: "Crea y administra eventos de forma centralizada" },
-      { icon: Users, title: "Control de Asistentes", desc: "Monitorea inscripciones y cupos en tiempo real" },
-      { icon: Clock, title: "Gestión sin estrés", desc: "Automatiza tareas y ahorra tiempo en la organización" },
-      { icon: TrendingUp, title: "Reportes y Analytics", desc: "Visualiza estadísticas de tus eventos" }
+      {
+        icon: Calendar,
+        title: "Gestiona tus Eventos",
+        desc: "Crea y administra eventos de forma centralizada",
+      },
+      {
+        icon: Users,
+        title: "Control de Asistentes",
+        desc: "Monitorea inscripciones y cupos en tiempo real",
+      },
+      {
+        icon: Clock,
+        title: "Gestión sin estrés",
+        desc: "Automatiza tareas y ahorra tiempo en la organización",
+      },
+      {
+        icon: TrendingUp,
+        title: "Reportes y Analytics",
+        desc: "Visualiza estadísticas de tus eventos",
+      },
     ],
     asistente: [
-      { icon: Calendar, title: "Inscripción Rápida", desc: "Regístrate en eventos con un solo clic" },
-      { icon: Shield, title: "Privacidad Garantizada", desc: "Tus datos protegidos y acceso seguro" },
-      { icon: Check, title: "Confirmación Automática", desc: "Recibe tu ticket por correo electrónico" },
-      { icon: Clock, title: "Historial Completo", desc: "Accede a tus eventos pasados y futuros" }
-    ]
+      {
+        icon: Calendar,
+        title: "Inscripción Rápida",
+        desc: "Regístrate en eventos con un solo clic",
+      },
+      {
+        icon: Shield,
+        title: "Privacidad Garantizada",
+        desc: "Tus datos protegidos y acceso seguro",
+      },
+      {
+        icon: Check,
+        title: "Confirmación Automática",
+        desc: "Recibe tu ticket por correo electrónico",
+      },
+      {
+        icon: Clock,
+        title: "Historial Completo",
+        desc: "Accede a tus eventos pasados y futuros",
+      },
+    ],
   };
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm shadow-sm z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <Calendar className="text-white" size={24} />
-            </div>
-            <span className="text-2xl font-bold text-slate-800">Espacio Evento</span>
-          </div>
-          <div className="hidden md:flex gap-6 items-center">
-            <a href="#salas" className="text-slate-600 hover:text-blue-600 transition">Salas</a>
-            <a href="#como-funciona" className="text-slate-600 hover:text-blue-600 transition">Cómo Funciona</a>
-            <a href="#precios" className="text-slate-600 hover:text-blue-600 transition">Precios</a>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition">
-              Iniciar Sesión
-            </button>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -78,13 +109,19 @@ export default function Home() {
                 🎉 Plataforma de Gestión de Eventos
               </div>
               <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-                Organiza eventos de forma <span className="text-blue-600">profesional</span>
+                Organiza eventos de forma{" "}
+                <span className="text-blue-600">profesional</span>
               </h1>
               <p className="text-xl text-slate-600 mb-8 leading-relaxed">
-                Sistema completo de gestión de eventos con control de asistentes, pagos integrados y arriendo de salas. Todo en un solo lugar.
+                Sistema completo de gestión de eventos con control de
+                asistentes, pagos integrados y arriendo de salas. Todo en un
+                solo lugar.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30">
+                <button
+                  onClick={() => (window.location.href = "/auth")}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 cursor-pointer"
+                >
                   Crear Cuenta Gratis
                   <ArrowRight size={20} />
                 </button>
@@ -102,8 +139,8 @@ export default function Home() {
             </div>
             <div className="relative">
               <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-8 shadow-2xl">
-                <img 
-                  src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=400&fit=crop" 
+                <img
+                  src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=400&fit=crop"
                   alt="Gestión de eventos"
                   className="rounded-lg w-full"
                 />
@@ -137,21 +174,21 @@ export default function Home() {
           {/* Tab Selector */}
           <div className="flex justify-center gap-4 mb-12">
             <button
-              onClick={() => setActiveTab('organizador')}
+              onClick={() => setActiveTab("organizador")}
               className={`px-8 py-3 rounded-lg font-semibold transition ${
-                activeTab === 'organizador'
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'bg-white text-slate-600 hover:bg-slate-100'
+                activeTab === "organizador"
+                  ? "bg-blue-600 text-white shadow-lg"
+                  : "bg-white text-slate-600 hover:bg-slate-100"
               }`}
             >
               Soy Organizador
             </button>
             <button
-              onClick={() => setActiveTab('asistente')}
+              onClick={() => setActiveTab("asistente")}
               className={`px-8 py-3 rounded-lg font-semibold transition ${
-                activeTab === 'asistente'
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'bg-white text-slate-600 hover:bg-slate-100'
+                activeTab === "asistente"
+                  ? "bg-blue-600 text-white shadow-lg"
+                  : "bg-white text-slate-600 hover:bg-slate-100"
               }`}
             >
               Soy Asistente
@@ -160,14 +197,16 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {beneficios[activeTab].map((item, index) => (
-              <div 
+              <div
                 key={index}
                 className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all hover:-translate-y-1"
               >
                 <div className="bg-gradient-to-br from-blue-100 to-purple-100 w-14 h-14 rounded-xl flex items-center justify-center mb-4">
                   <item.icon className="text-blue-600" size={28} />
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-slate-800">{item.title}</h3>
+                <h3 className="text-xl font-semibold mb-2 text-slate-800">
+                  {item.title}
+                </h3>
                 <p className="text-slate-600">{item.desc}</p>
               </div>
             ))}
@@ -189,13 +228,13 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {salas.map((sala, index) => (
-              <div 
+              <div
                 key={index}
                 className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 border border-slate-200"
               >
                 <div className="relative h-64 overflow-hidden">
-                  <img 
-                    src={sala.imagen} 
+                  <img
+                    src={sala.imagen}
                     alt={sala.nombre}
                     className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                   />
@@ -204,7 +243,9 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-2xl font-bold mb-3 text-slate-800">{sala.nombre}</h3>
+                  <h3 className="text-2xl font-bold mb-3 text-slate-800">
+                    {sala.nombre}
+                  </h3>
                   <div className="space-y-3 text-slate-600 mb-4">
                     <div className="flex items-center gap-2">
                       <Users size={18} className="text-blue-600" />
@@ -216,7 +257,9 @@ export default function Home() {
                     </div>
                     <div className="flex items-center gap-2">
                       <CreditCard size={18} className="text-blue-600" />
-                      <span className="font-semibold text-slate-800">Gestión cómoda y centralizada</span>
+                      <span className="font-semibold text-slate-800">
+                        Gestión cómoda y centralizada
+                      </span>
                     </div>
                   </div>
                   <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition">
@@ -245,17 +288,26 @@ export default function Home() {
             <div className="bg-white/10 backdrop-blur-sm p-8 rounded-2xl border border-white/20">
               <Shield className="text-blue-400 mb-4" size={40} />
               <h3 className="text-2xl font-bold mb-3">Datos Seguros</h3>
-              <p className="text-blue-100">Mantenemos tus datos seguros y protegidos.</p>
+              <p className="text-blue-100">
+                Mantenemos tus datos seguros y protegidos.
+              </p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm p-8 rounded-2xl border border-white/20">
               <Calendar className="text-purple-400 mb-4" size={40} />
               <h3 className="text-2xl font-bold mb-3">Gestiona tus eventos</h3>
-              <p className="text-blue-100">Crea, edita y elimina eventos con control total de cupos y fechas.</p>
+              <p className="text-blue-100">
+                Crea, edita y elimina eventos con control total de cupos y
+                fechas.
+              </p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm p-8 rounded-2xl border border-white/20">
               <House className="text-green-400 mb-4" size={40} />
-              <h3 className="text-2xl font-bold mb-3">Desde la comodidad de tu casa</h3>
-              <p className="text-blue-100">Realiza todas tus gestiones sin salir de casa.</p>
+              <h3 className="text-2xl font-bold mb-3">
+                Desde la comodidad de tu casa
+              </h3>
+              <p className="text-blue-100">
+                Realiza todas tus gestiones sin salir de casa.
+              </p>
             </div>
           </div>
         </div>
@@ -289,33 +341,61 @@ export default function Home() {
                 <span className="text-xl font-bold">Espacio Evento</span>
               </div>
               <p className="text-slate-400 text-sm">
-                Plataforma de gestión integral para eventos y arriendo de espacios.
+                Plataforma de gestión integral para eventos y arriendo de
+                espacios.
               </p>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Producto</h4>
               <ul className="space-y-2 text-slate-400 text-sm">
-                <li><a href="#" className="hover:text-white transition">Características</a></li>
-                <li><a href="#" className="hover:text-white transition">Precios</a></li>
+                <li>
+                  <a href="#" className="hover:text-white transition">
+                    Características
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition">
+                    Precios
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Empresa</h4>
               <ul className="space-y-2 text-slate-400 text-sm">
-                <li><a href="#" className="hover:text-white transition">Sobre Nosotros</a></li>
-                <li><a href="#" className="hover:text-white transition">Contacto</a></li>
+                <li>
+                  <a href="#" className="hover:text-white transition">
+                    Sobre Nosotros
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition">
+                    Contacto
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-slate-400 text-sm">
-                <li><a href="#" className="hover:text-white transition">Privacidad</a></li>
-                <li><a href="#" className="hover:text-white transition">Términos</a></li>
+                <li>
+                  <a href="#" className="hover:text-white transition">
+                    Privacidad
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition">
+                    Términos
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
           <div className="border-t border-slate-800 pt-8 text-center text-slate-400 text-sm">
-            <p>© 2025 Espacio Evento. Proyecto desarrollado por Tomás Vásquez, Felipe Toro, Miguel Raibel, Katalina Ramírez y Jorge Jara.</p>
+            <p>
+              © 2025 Espacio Evento. Proyecto desarrollado por Tomás Vásquez,
+              Felipe Toro, Miguel Raibel, Katalina Ramírez y Jorge Jara.
+            </p>
           </div>
         </div>
       </footer>
