@@ -11,15 +11,17 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Header() {
   const { user, isAuthenticated, logout, hasRole } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isAdmin = hasRole("administrador") || hasRole("admin");
+  const isHomePage = pathname === "/";
 
   const handleLogout = () => {
     logout();
@@ -72,24 +74,22 @@ export default function Header() {
               Salas
             </a>
           )}
-          <a
-            href="#salas"
-            className="text-slate-600 hover:text-blue-600 transition"
-          >
-            Salas Disponibles
-          </a>
-          <a
-            href="#como-funciona"
-            className="text-slate-600 hover:text-blue-600 transition"
-          >
-            Cómo Funciona
-          </a>
-          <a
-            href="#precios"
-            className="text-slate-600 hover:text-blue-600 transition"
-          >
-            Precios
-          </a>
+          {isHomePage && (
+            <>
+              <a
+                href="#salas"
+                className="text-slate-600 hover:text-blue-600 transition"
+              >
+                Salas Disponibles
+              </a>
+              <a
+                href="#como-funciona"
+                className="text-slate-600 hover:text-blue-600 transition"
+              >
+                Cómo Funciona
+              </a>
+            </>
+          )}
 
           {isAuthenticated ? (
             <div className="relative" ref={dropdownRef}>
