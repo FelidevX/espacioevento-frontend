@@ -91,13 +91,15 @@ export default function EventosPage() {
   const isAsistente = hasRole("asistente");
 
   // Para organizadores: filtrar eventos propios
-  const misEventos = isOrganizer && user
-    ? eventos.filter((e) => e.id_organizador === parseInt(user.id))
-    : [];
+  const misEventos =
+    isOrganizer && user
+      ? eventos.filter((e) => e.id_organizador === parseInt(user.id))
+      : [];
 
-  const eventosDeOtros = isOrganizer && user
-    ? eventos.filter((e) => e.id_organizador !== parseInt(user.id))
-    : [];
+  const eventosDeOtros =
+    isOrganizer && user
+      ? eventos.filter((e) => e.id_organizador !== parseInt(user.id))
+      : [];
 
   // Filtrar eventos para asistentes: en "todos" no mostrar los que ya está inscrito
   const eventosDisponibles = isAsistente
@@ -107,9 +109,13 @@ export default function EventosPage() {
     : eventos;
 
   const eventosToShow = isAsistente
-    ? activeTab === "todos" ? eventosDisponibles : eventosInscritos
+    ? activeTab === "todos"
+      ? eventosDisponibles
+      : eventosInscritos
     : isOrganizer
-    ? activeTab === "todos" ? eventosDeOtros : misEventos
+    ? activeTab === "todos"
+      ? eventosDeOtros
+      : misEventos
     : eventos;
 
   return (

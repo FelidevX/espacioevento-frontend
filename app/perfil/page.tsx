@@ -36,7 +36,9 @@ export default function PerfilPage() {
               <div className="flex items-start gap-4 p-4 bg-slate-50 rounded-lg">
                 <User className="text-blue-600 mt-1" size={24} />
                 <div>
-                  <p className="text-sm text-slate-500 font-semibold">Nombre Completo</p>
+                  <p className="text-sm text-slate-500 font-semibold">
+                    Nombre Completo
+                  </p>
                   <p className="text-lg text-slate-900 font-medium">
                     {user.nombre} {user.apellido}
                   </p>
@@ -46,8 +48,12 @@ export default function PerfilPage() {
               <div className="flex items-start gap-4 p-4 bg-slate-50 rounded-lg">
                 <Mail className="text-blue-600 mt-1" size={24} />
                 <div>
-                  <p className="text-sm text-slate-500 font-semibold">Correo Electrónico</p>
-                  <p className="text-lg text-slate-900 font-medium">{user.correo}</p>
+                  <p className="text-sm text-slate-500 font-semibold">
+                    Correo Electrónico
+                  </p>
+                  <p className="text-lg text-slate-900 font-medium">
+                    {user.correo}
+                  </p>
                 </div>
               </div>
 
@@ -71,8 +77,12 @@ export default function PerfilPage() {
               <div className="flex items-start gap-4 p-4 bg-slate-50 rounded-lg">
                 <Calendar className="text-blue-600 mt-1" size={24} />
                 <div>
-                  <p className="text-sm text-slate-500 font-semibold">ID de Usuario</p>
-                  <p className="text-lg text-slate-900 font-medium">#{user.id}</p>
+                  <p className="text-sm text-slate-500 font-semibold">
+                    ID de Usuario
+                  </p>
+                  <p className="text-lg text-slate-900 font-medium">
+                    #{user.id}
+                  </p>
                 </div>
               </div>
             </div>

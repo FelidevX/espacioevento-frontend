@@ -1,6 +1,15 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { Calendar, User, LogOut, Settings, ChevronDown, Building, Users, ClipboardList } from "lucide-react";
+import {
+  Calendar,
+  User,
+  LogOut,
+  Settings,
+  ChevronDown,
+  Building,
+  Users,
+  ClipboardList,
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 

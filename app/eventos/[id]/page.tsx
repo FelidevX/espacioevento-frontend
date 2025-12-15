@@ -430,8 +430,12 @@ export default function EventoDetallesPage() {
                 <div className="flex items-start gap-4 p-4 bg-slate-50 rounded-lg col-span-full">
                   <Building className="text-blue-600 mt-1" size={24} />
                   <div className="flex-1">
-                    <p className="text-sm text-slate-500 font-semibold mb-2">Sala</p>
-                    <p className="text-lg text-slate-900 font-bold">{sala.nombre}</p>
+                    <p className="text-sm text-slate-500 font-semibold mb-2">
+                      Sala
+                    </p>
+                    <p className="text-lg text-slate-900 font-bold">
+                      {sala.nombre}
+                    </p>
                     <div className="mt-2 space-y-1">
                       <p className="text-sm text-slate-600 flex items-center gap-2">
                         <MapPin size={16} />
@@ -442,10 +446,18 @@ export default function EventoDetallesPage() {
                         Capacidad: {sala.capacidad} personas
                       </p>
                       <p className="text-sm text-slate-600">
-                        Estado: <span className={`font-semibold ${
-                          sala.estado === 'disponible' ? 'text-green-600' : 
-                          sala.estado === 'arrendada' ? 'text-orange-600' : 'text-gray-600'
-                        }`}>{sala.estado}</span>
+                        Estado:{" "}
+                        <span
+                          className={`font-semibold ${
+                            sala.estado === "disponible"
+                              ? "text-green-600"
+                              : sala.estado === "arrendada"
+                              ? "text-orange-600"
+                              : "text-gray-600"
+                          }`}
+                        >
+                          {sala.estado}
+                        </span>
                       </p>
                     </div>
                   </div>

@@ -1,5 +1,5 @@
-import { apiService } from '../api';
-import { Usuario } from '../types';
+import { apiService } from "../api";
+import { Usuario } from "../types";
 
 class UsuariosService {
   async getAll(token: string): Promise<Usuario[]> {

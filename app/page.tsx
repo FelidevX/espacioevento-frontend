@@ -26,7 +26,11 @@ export default function Home() {
   const [salas, setSalas] = useState<Sala[]>([]);
   const [loadingSalas, setLoadingSalas] = useState(true);
 
-  const isOrganizerOrAdmin = hasRole("organizador") || hasRole("organizer") || hasRole("administrador") || hasRole("admin");
+  const isOrganizerOrAdmin =
+    hasRole("organizador") ||
+    hasRole("organizer") ||
+    hasRole("administrador") ||
+    hasRole("admin");
 
   useEffect(() => {
     loadSalas();
@@ -36,7 +40,7 @@ export default function Home() {
     try {
       if (token) {
         const data = await salasService.getAll(token);
-        setSalas(data.filter(sala => sala.estado === 'disponible'));
+        setSalas(data.filter((sala) => sala.estado === "disponible"));
       }
     } catch (err) {
       console.error("Error cargando salas:", err);
@@ -229,7 +233,9 @@ export default function Home() {
               </div>
             ) : salas.length === 0 ? (
               <div className="col-span-3 text-center py-12">
-                <p className="text-slate-600">No hay salas disponibles en este momento</p>
+                <p className="text-slate-600">
+                  No hay salas disponibles en este momento
+                </p>
               </div>
             ) : (
               salas.map((sala) => (

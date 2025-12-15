@@ -198,11 +198,11 @@ class ApiService {
 
   async updateInscripcionEstadoPago(
     id: number,
-    estadoPago: 'pendiente' | 'pagado',
+    estadoPago: "pendiente" | "pagado",
     token: string
   ): Promise<any> {
     return this.request<any>(`/inscripciones/${id}/pago`, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
       },

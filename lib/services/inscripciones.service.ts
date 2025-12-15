@@ -38,7 +38,7 @@ export class InscripcionesService {
 
   async updateEstadoPago(
     id: number,
-    estadoPago: 'pendiente' | 'pagado',
+    estadoPago: "pendiente" | "pagado",
     token: string
   ): Promise<any> {
     return apiService.updateInscripcionEstadoPago(id, estadoPago, token);

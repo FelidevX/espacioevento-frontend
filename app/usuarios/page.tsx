@@ -67,23 +67,40 @@ export default function UsuariosPage() {
                 <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
               </div>
             ) : usuarios.length === 0 ? (
-              <p className="text-slate-600 text-center py-12">No hay usuarios registrados</p>
+              <p className="text-slate-600 text-center py-12">
+                No hay usuarios registrados
+              </p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b-2 border-slate-200">
-                      <th className="text-left py-4 px-4 text-slate-700 font-bold">ID</th>
-                      <th className="text-left py-4 px-4 text-slate-700 font-bold">Nombre</th>
-                      <th className="text-left py-4 px-4 text-slate-700 font-bold">Correo</th>
-                      <th className="text-left py-4 px-4 text-slate-700 font-bold">Roles</th>
-                      <th className="text-left py-4 px-4 text-slate-700 font-bold">Fecha Registro</th>
+                      <th className="text-left py-4 px-4 text-slate-700 font-bold">
+                        ID
+                      </th>
+                      <th className="text-left py-4 px-4 text-slate-700 font-bold">
+                        Nombre
+                      </th>
+                      <th className="text-left py-4 px-4 text-slate-700 font-bold">
+                        Correo
+                      </th>
+                      <th className="text-left py-4 px-4 text-slate-700 font-bold">
+                        Roles
+                      </th>
+                      <th className="text-left py-4 px-4 text-slate-700 font-bold">
+                        Fecha Registro
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {usuarios.map((usuario) => (
-                      <tr key={usuario.id_usuario} className="border-b border-slate-100 hover:bg-slate-50 transition">
-                        <td className="py-4 px-4 text-slate-700 font-medium">#{usuario.id_usuario}</td>
+                      <tr
+                        key={usuario.id_usuario}
+                        className="border-b border-slate-100 hover:bg-slate-50 transition"
+                      >
+                        <td className="py-4 px-4 text-slate-700 font-medium">
+                          #{usuario.id_usuario}
+                        </td>
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
@@ -116,10 +133,12 @@ export default function UsuariosPage() {
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-2 text-slate-600">
                             <Calendar size={16} />
-                            {new Date(usuario.fecha_registro).toLocaleDateString("es-CL", {
+                            {new Date(
+                              usuario.fecha_registro
+                            ).toLocaleDateString("es-CL", {
                               year: "numeric",
                               month: "short",
-                              day: "numeric"
+                              day: "numeric",
                             })}
                           </div>
                         </td>
@@ -132,7 +151,10 @@ export default function UsuariosPage() {
 
             <div className="mt-6 pt-6 border-t border-slate-200 flex items-center justify-between">
               <p className="text-sm text-slate-600">
-                Total de usuarios: <span className="font-bold text-slate-900">{usuarios.length}</span>
+                Total de usuarios:{" "}
+                <span className="font-bold text-slate-900">
+                  {usuarios.length}
+                </span>
               </p>
             </div>
           </div>

@@ -1,5 +1,5 @@
-import { apiService } from '../api';
-import { Sala } from '../types';
+import { apiService } from "../api";
+import { Sala } from "../types";
 
 class SalasService {
   async getAll(token: string): Promise<Sala[]> {
@@ -10,7 +10,7 @@ class SalasService {
     return apiService.getSala(id, token);
   }
 
-  async create(data: Omit<Sala, 'id_sala'>, token: string): Promise<Sala> {
+  async create(data: Omit<Sala, "id_sala">, token: string): Promise<Sala> {
     return apiService.createSala(data, token);
   }
 
