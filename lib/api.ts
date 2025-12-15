@@ -1,6 +1,6 @@
 import { Evento } from "./types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
 export interface LoginData {
   email: string;
