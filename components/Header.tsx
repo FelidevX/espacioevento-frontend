@@ -1,14 +1,16 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { Calendar, User, LogOut, Settings, ChevronDown } from "lucide-react";
+import { Calendar, User, LogOut, Settings, ChevronDown, Building, Users, ClipboardList } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, hasRole } = useAuth();
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const isAdmin = hasRole("administrador") || hasRole("admin");
 
   const handleLogout = () => {
     logout();
@@ -52,11 +54,20 @@ export default function Header() {
               Eventos
             </a>
           )}
+          {isAuthenticated && isAdmin && (
+            <a
+              href="/salas"
+              className="text-slate-600 hover:text-blue-600 transition font-medium flex items-center gap-1"
+            >
+              <Building size={18} />
+              Salas
+            </a>
+          )}
           <a
             href="#salas"
             className="text-slate-600 hover:text-blue-600 transition"
           >
-            Salas
+            Salas Disponibles
           </a>
           <a
             href="#como-funciona"
@@ -111,9 +122,35 @@ export default function Header() {
                     Mi Perfil
                   </button>
 
+                  {isAdmin && (
+                    <>
+                      <button
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          router.push("/usuarios");
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-100 flex items-center gap-3 transition"
+                      >
+                        <Users size={18} />
+                        Gestión de Usuarios
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          router.push("/inscripciones");
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-100 flex items-center gap-3 transition"
+                      >
+                        <ClipboardList size={18} />
+                        Todas las Inscripciones
+                      </button>
+                    </>
+                  )}
+
                   <button
                     onClick={handleLogout}
-                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition"
+                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition border-t border-slate-200 mt-2 pt-2"
                   >
                     <LogOut size={18} />
                     Cerrar Sesión

@@ -144,6 +144,15 @@ class ApiService {
   }
 
   // Inscripciones
+  async getInscripciones(token: string): Promise<any[]> {
+    return this.request<any[]>("/inscripciones", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+
   async createInscripcion(data: any, token: string): Promise<any> {
     return this.request<any>("/inscripciones", {
       method: "POST",
@@ -187,6 +196,20 @@ class ApiService {
     });
   }
 
+  async updateInscripcionEstadoPago(
+    id: number,
+    estadoPago: 'pendiente' | 'pagado',
+    token: string
+  ): Promise<any> {
+    return this.request<any>(`/inscripciones/${id}/pago`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ estado_pago: estadoPago }),
+    });
+  }
+
   // Pagos
   async createMercadoPagoPreference(
     idInscripcion: number,
@@ -198,6 +221,73 @@ class ApiService {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ id_inscripcion: idInscripcion }),
+    });
+  }
+
+  // Salas
+  async getSalas(token: string): Promise<any[]> {
+    return this.request<any[]>("/salas", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+
+  async getSala(id: number, token: string): Promise<any> {
+    return this.request<any>(`/salas/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+
+  async createSala(data: any, token: string): Promise<any> {
+    return this.request<any>("/salas", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateSala(id: number, data: any, token: string): Promise<any> {
+    return this.request<any>(`/salas/${id}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteSala(id: number, token: string): Promise<void> {
+    return this.request<void>(`/salas/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+
+  // Usuarios
+  async getUsuarios(token: string): Promise<Usuario[]> {
+    return this.request<Usuario[]>("/usuarios", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+
+  async getUsuario(id: number, token: string): Promise<Usuario> {
+    return this.request<Usuario>(`/usuarios/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
   }
 }

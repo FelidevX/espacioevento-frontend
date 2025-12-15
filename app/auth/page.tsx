@@ -149,7 +149,7 @@ export default function AuthPage() {
                       value={formData.nombre}
                       onChange={handleChange}
                       required={!isLogin}
-                      className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                      className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-slate-600"
                       placeholder="Tu nombre"
                     />
                   </div>
@@ -169,7 +169,7 @@ export default function AuthPage() {
                       value={formData.apellido}
                       onChange={handleChange}
                       required={!isLogin}
-                      className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                      className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-slate-600"
                       placeholder="Tu apellido"
                     />
                   </div>
@@ -188,15 +188,16 @@ export default function AuthPage() {
                       value={formData.rol}
                       onChange={handleChange}
                       required={!isLogin}
-                      className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition appearance-none bg-white"
+                      className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition appearance-none bg-white text-slate-600"
                     >
                       <option value="asistente">Asistente</option>
                       <option value="organizador">Organizador</option>
+                      <option value="administrador">Administrador</option>
                     </select>
                   </div>
                   <p className="text-xs text-slate-500 mt-2">
                     Asistente: Para inscribirte a eventos | Organizador: Para
-                    crear eventos
+                    crear eventos | Administrador: Gestiona salas
                   </p>
                 </div>
               </>
@@ -217,7 +218,7 @@ export default function AuthPage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                  className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-slate-600 text-slate-600"
                   placeholder="tu@email.com"
                 />
               </div>
@@ -239,7 +240,7 @@ export default function AuthPage() {
                   onChange={handleChange}
                   required
                   minLength={6}
-                  className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                  className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-slate-600 text-slate-600"
                   placeholder="••••••••"
                 />
               </div>

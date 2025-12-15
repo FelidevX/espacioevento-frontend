@@ -90,6 +90,15 @@ export default function EventosPage() {
     hasRole("admin");
   const isAsistente = hasRole("asistente");
 
+  // Para organizadores: filtrar eventos propios
+  const misEventos = isOrganizer && user
+    ? eventos.filter((e) => e.id_organizador === parseInt(user.id))
+    : [];
+
+  const eventosDeOtros = isOrganizer && user
+    ? eventos.filter((e) => e.id_organizador !== parseInt(user.id))
+    : [];
+
   // Filtrar eventos para asistentes: en "todos" no mostrar los que ya está inscrito
   const eventosDisponibles = isAsistente
     ? eventos.filter(
@@ -97,8 +106,11 @@ export default function EventosPage() {
       )
     : eventos;
 
-  const eventosToShow =
-    activeTab === "todos" ? eventosDisponibles : eventosInscritos;
+  const eventosToShow = isAsistente
+    ? activeTab === "todos" ? eventosDisponibles : eventosInscritos
+    : isOrganizer
+    ? activeTab === "todos" ? eventosDeOtros : misEventos
+    : eventos;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -136,7 +148,7 @@ export default function EventosPage() {
                 )}
               </div>
 
-              {/* Tabs */}
+              {/* Tabs para Asistentes */}
               {isAsistente && (
                 <div className="flex gap-2 mb-6 border-b border-slate-200">
                   <button
@@ -147,7 +159,7 @@ export default function EventosPage() {
                         : "text-slate-600 hover:text-slate-900"
                     }`}
                   >
-                    Todos los Eventos
+                    Todos los Eventos ({eventosDisponibles.length})
                   </button>
                   <button
                     onClick={() => setActiveTab("inscritos")}
@@ -158,6 +170,32 @@ export default function EventosPage() {
                     }`}
                   >
                     Mis Inscripciones ({eventosInscritos.length})
+                  </button>
+                </div>
+              )}
+
+              {/* Tabs para Organizadores */}
+              {isOrganizer && !isAsistente && (
+                <div className="flex gap-2 mb-6 border-b border-slate-200">
+                  <button
+                    onClick={() => setActiveTab("inscritos")}
+                    className={`px-6 py-3 font-semibold transition ${
+                      activeTab === "inscritos"
+                        ? "text-blue-600 border-b-2 border-blue-600"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    Mis Eventos ({misEventos.length})
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("todos")}
+                    className={`px-6 py-3 font-semibold transition ${
+                      activeTab === "todos"
+                        ? "text-blue-600 border-b-2 border-blue-600"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    Todos los Eventos ({eventosDeOtros.length})
                   </button>
                 </div>
               )}

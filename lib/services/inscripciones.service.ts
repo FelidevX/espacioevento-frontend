@@ -35,6 +35,14 @@ export class InscripcionesService {
   async delete(id: number, token: string): Promise<void> {
     return apiService.deleteInscripcion(id, token);
   }
+
+  async updateEstadoPago(
+    id: number,
+    estadoPago: 'pendiente' | 'pagado',
+    token: string
+  ): Promise<any> {
+    return apiService.updateInscripcionEstadoPago(id, estadoPago, token);
+  }
 }
 
 export const inscripcionesService = new InscripcionesService();

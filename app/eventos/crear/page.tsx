@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import {
   ArrowLeft,
@@ -13,13 +13,16 @@ import {
   Home,
 } from "lucide-react";
 import { eventosService } from "@/lib/services/eventos.service";
-import { TipoEvento, EstadoEvento } from "@/lib/types";
+import { salasService } from "@/lib/services/salas.service";
+import { TipoEvento, EstadoEvento, Sala } from "@/lib/types";
 
-export default function CrearEventoPage() {
+function CrearEventoForm() {
   const { token, isAuthenticated, hasRole } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [salas, setSalas] = useState<Sala[]>([]);
   const [formData, setFormData] = useState({
     nombre_evento: "",
     descripcion: "",
@@ -29,7 +32,7 @@ export default function CrearEventoPage() {
     cupos_totales: "",
     precio_entrada: "",
     tipo_evento: "público",
-    id_sala: "1", // Por ahora hardcodeado, después lo haremos dinámico
+    id_sala: "",
   });
 
   useEffect(() => {
@@ -49,8 +52,34 @@ export default function CrearEventoPage() {
     if (!isOrganizer && !isAdmin) {
       console.log("Access denied - redirecting to /eventos");
       router.push("/eventos");
+      return;
     }
+
+    // Cargar salas disponibles
+    loadSalas();
   }, [isAuthenticated, hasRole, router]);
+
+  const loadSalas = async () => {
+    try {
+      if (token) {
+        const data = await salasService.getAll(token);
+        setSalas(data);
+
+        // Pre-seleccionar sala desde query param si existe
+        const salaId = searchParams.get("sala");
+        if (salaId && data.some((s) => s.id_sala.toString() === salaId)) {
+          setFormData((prev) => ({ ...prev, id_sala: salaId }));
+        } else if (data.length > 0) {
+          setFormData((prev) => ({
+            ...prev,
+            id_sala: data[0].id_sala.toString(),
+          }));
+        }
+      }
+    } catch (error) {
+      console.error("Error cargando salas:", error);
+    }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -142,7 +171,7 @@ export default function CrearEventoPage() {
                     value={formData.nombre_evento}
                     onChange={handleChange}
                     required
-                    className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-slate-600"
                     placeholder="Ej: Concierto de Rock 2025"
                   />
                 </div>
@@ -163,7 +192,7 @@ export default function CrearEventoPage() {
                     onChange={handleChange}
                     required
                     rows={4}
-                    className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none"
+                    className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none text-slate-600"
                     placeholder="Describe tu evento..."
                   />
                 </div>
@@ -180,10 +209,37 @@ export default function CrearEventoPage() {
                     value={formData.fecha}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-slate-600"
                   />
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Sala *
+                  </label>
+                  <select
+                    name="id_sala"
+                    value={formData.id_sala}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-slate-600"
+                  >
+                    <option value="">Selecciona una sala</option>
+                    {salas.map((sala) => (
+                      <option key={sala.id_sala} value={sala.id_sala}>
+                        {sala.nombre} - {sala.ubicación} (Cap: {sala.capacidad})
+                      </option>
+                    ))}
+                  </select>
+                  {salas.length === 0 && (
+                    <p className="text-xs text-red-500 mt-1">
+                      No hay salas disponibles. Contacta al administrador.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Tipo de Evento *
@@ -192,7 +248,7 @@ export default function CrearEventoPage() {
                     name="tipo_evento"
                     value={formData.tipo_evento}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-slate-600"
                   >
                     <option value="público">Público</option>
                     <option value="privado">Privado</option>
@@ -216,7 +272,7 @@ export default function CrearEventoPage() {
                       value={formData.hora_inicio}
                       onChange={handleChange}
                       required
-                      className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                      className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-slate-600"
                     />
                   </div>
                 </div>
@@ -236,7 +292,7 @@ export default function CrearEventoPage() {
                       value={formData.hora_fin}
                       onChange={handleChange}
                       required
-                      className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                      className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-slate-600"
                     />
                   </div>
                 </div>
@@ -259,7 +315,7 @@ export default function CrearEventoPage() {
                       onChange={handleChange}
                       required
                       min="1"
-                      className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                      className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-slate-600"
                       placeholder="100"
                     />
                   </div>
@@ -282,7 +338,7 @@ export default function CrearEventoPage() {
                       required
                       min="0"
                       step="0.01"
-                      className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                      className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-slate-600"
                       placeholder="15000"
                     />
                   </div>
@@ -310,5 +366,24 @@ export default function CrearEventoPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CrearEventoPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-50">
+          <Header />
+          <div className="pt-24 pb-12 px-4">
+            <div className="max-w-3xl mx-auto text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <CrearEventoForm />
+    </Suspense>
   );
 }

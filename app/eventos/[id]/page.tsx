@@ -12,24 +12,41 @@ import {
   Trash2,
   UserPlus,
   CreditCard,
+  Building,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
 import { eventosService } from "@/lib/services/eventos.service";
 import { inscripcionesService } from "@/lib/services/inscripciones.service";
+import { salasService } from "@/lib/services/salas.service";
 import { apiService } from "@/lib/api";
-import { Evento } from "@/lib/types";
+import { Evento, TipoEvento, Sala } from "@/lib/types";
 
 export default function EventoDetallesPage() {
   const params = useParams();
   const router = useRouter();
   const { token, isAuthenticated, hasRole, user } = useAuth();
   const [evento, setEvento] = useState<Evento | null>(null);
+  const [sala, setSala] = useState<Sala | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [inscribiendo, setInscribiendo] = useState(false);
   const [inscripcion, setInscripcion] = useState<any>(null);
   const [cantidadInscritos, setCantidadInscritos] = useState(0);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editForm, setEditForm] = useState({
+    nombre_evento: "",
+    descripcion: "",
+    fecha: "",
+    hora_inicio: "",
+    hora_fin: "",
+    cupos_totales: 0,
+    precio_entrada: 0,
+    id_organizador: 0,
+    id_sala: 0,
+    tipo_evento: TipoEvento.PUBLICO,
+  });
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -47,6 +64,16 @@ export default function EventoDetallesPage() {
           token
         );
         setEvento(data);
+
+        // Cargar información de la sala
+        if (data.id_sala) {
+          try {
+            const salaData = await salasService.getById(data.id_sala, token);
+            setSala(salaData);
+          } catch (err) {
+            console.error("Error cargando sala:", err);
+          }
+        }
 
         // Cargar cantidad de inscritos
         const inscritos = await inscripcionesService.getByEvento(
@@ -72,16 +99,52 @@ export default function EventoDetallesPage() {
   };
 
   const handleDelete = async () => {
-    if (!confirm("¿Estás seguro de eliminar este evento?")) return;
-
     try {
       if (token && params.id) {
         await eventosService.delete(parseInt(params.id as string), token);
+        setShowDeleteModal(false);
         router.push("/eventos");
       }
     } catch (err) {
       console.error("Error eliminando evento:", err);
       alert("Error al eliminar el evento");
+    }
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (token && params.id) {
+        await eventosService.update(
+          parseInt(params.id as string),
+          editForm,
+          token
+        );
+        setShowEditModal(false);
+        await loadEvento();
+        alert("Evento actualizado exitosamente");
+      }
+    } catch (err: any) {
+      console.error("Error actualizando evento:", err);
+      alert(err.message || "Error al actualizar el evento");
+    }
+  };
+
+  const openEditModal = () => {
+    if (evento) {
+      setEditForm({
+        nombre_evento: evento.nombre_evento,
+        descripcion: evento.descripcion || "",
+        fecha: evento.fecha,
+        hora_inicio: evento.hora_inicio,
+        hora_fin: evento.hora_fin,
+        cupos_totales: evento.cupos_totales,
+        precio_entrada: evento.precio_entrada,
+        id_organizador: evento.id_organizador,
+        id_sala: evento.id_sala,
+        tipo_evento: evento.tipo_evento,
+      });
+      setShowEditModal(true);
     }
   };
 
@@ -154,10 +217,28 @@ export default function EventoDetallesPage() {
 
         // Actualizar estado después de 3 segundos (simulado)
         setTimeout(async () => {
-          inscripcion.estado_pago = "pagado";
-          setInscripcion({ ...inscripcion });
-          alert("¡Pago realizado exitosamente!");
-          await loadEvento();
+          try {
+            // Actualizar estado en la base de datos
+            await inscripcionesService.updateEstadoPago(
+              inscripcion.id_inscripcion,
+              "pagado",
+              token
+            );
+
+            // Actualizar estado local con nuevo objeto
+            const inscripcionActualizada = {
+              ...inscripcion,
+              estado_pago: "pagado" as const,
+            };
+            setInscripcion(inscripcionActualizada);
+            alert("¡Pago realizado exitosamente!");
+            await loadEvento();
+          } catch (error) {
+            console.error("Error actualizando estado de pago:", error);
+            alert(
+              "El pago se procesó pero hubo un error al actualizar el estado"
+            );
+          }
         }, 3000);
       } else {
         throw new Error("No se recibió el link de pago");
@@ -344,6 +425,32 @@ export default function EventoDetallesPage() {
                   </p>
                 </div>
               </div>
+
+              {sala && (
+                <div className="flex items-start gap-4 p-4 bg-slate-50 rounded-lg col-span-full">
+                  <Building className="text-blue-600 mt-1" size={24} />
+                  <div className="flex-1">
+                    <p className="text-sm text-slate-500 font-semibold mb-2">Sala</p>
+                    <p className="text-lg text-slate-900 font-bold">{sala.nombre}</p>
+                    <div className="mt-2 space-y-1">
+                      <p className="text-sm text-slate-600 flex items-center gap-2">
+                        <MapPin size={16} />
+                        {sala.ubicación}
+                      </p>
+                      <p className="text-sm text-slate-600 flex items-center gap-2">
+                        <Users size={16} />
+                        Capacidad: {sala.capacidad} personas
+                      </p>
+                      <p className="text-sm text-slate-600">
+                        Estado: <span className={`font-semibold ${
+                          sala.estado === 'disponible' ? 'text-green-600' : 
+                          sala.estado === 'arrendada' ? 'text-orange-600' : 'text-gray-600'
+                        }`}>{sala.estado}</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Acciones */}
@@ -351,16 +458,14 @@ export default function EventoDetallesPage() {
               {isOwnerOrAdmin ? (
                 <>
                   <button
-                    onClick={() =>
-                      router.push(`/eventos/${evento.id_evento}/editar`)
-                    }
+                    onClick={openEditModal}
                     className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition"
                   >
                     <Edit size={20} />
                     Editar Evento
                   </button>
                   <button
-                    onClick={handleDelete}
+                    onClick={() => setShowDeleteModal(true)}
                     className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2 transition"
                   >
                     <Trash2 size={20} />
@@ -439,6 +544,183 @@ export default function EventoDetallesPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal de confirmación de eliminación */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
+            <h3 className="text-2xl font-bold text-slate-900 mb-4">
+              Eliminar Evento
+            </h3>
+
+            <p className="text-slate-600 mb-6">
+              ¿Estás seguro de que deseas eliminar el evento{" "}
+              <strong>{evento?.nombre_evento}</strong>? Esta acción no se puede
+              deshacer.
+            </p>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-6 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 transition"
+              >
+                Cancelar
+              </button>
+
+              <button
+                onClick={handleDelete}
+                className="px-6 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de edición de evento */}
+      {showEditModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full p-6 shadow-2xl my-8">
+            <h3 className="text-2xl font-bold text-slate-900 mb-6">
+              Editar Evento
+            </h3>
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Nombre del Evento
+                </label>
+                <input
+                  type="text"
+                  value={editForm.nombre_evento}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, nombre_evento: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Descripción
+                </label>
+                <textarea
+                  value={editForm.descripcion}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, descripcion: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  rows={4}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Fecha
+                  </label>
+                  <input
+                    type="date"
+                    value={editForm.fecha}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, fecha: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Cupos Totales
+                  </label>
+                  <input
+                    type="number"
+                    value={editForm.cupos_totales}
+                    onChange={(e) =>
+                      setEditForm({
+                        ...editForm,
+                        cupos_totales: parseInt(e.target.value),
+                      })
+                    }
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    min="1"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Hora Inicio
+                  </label>
+                  <input
+                    type="time"
+                    value={editForm.hora_inicio}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, hora_inicio: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Hora Fin
+                  </label>
+                  <input
+                    type="time"
+                    value={editForm.hora_fin}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, hora_fin: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Precio de Entrada ($)
+                </label>
+                <input
+                  type="number"
+                  value={editForm.precio_entrada}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      precio_entrada: parseInt(e.target.value),
+                    })
+                  }
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  min="0"
+                  required
+                />
+              </div>
+
+              <div className="flex gap-3 justify-end pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-6 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 transition"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+                >
+                  Guardar Cambios
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
