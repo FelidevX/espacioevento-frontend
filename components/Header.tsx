@@ -57,14 +57,12 @@ export default function Header() {
         </a>
 
         <div className="hidden md:flex gap-6 items-center">
-          {!isHomePage && (
-            <a
-              href="/"
-              className="text-slate-600 hover:text-blue-600 transition font-medium"
-            >
-              Inicio
-            </a>
-          )}
+          <a
+            href="/"
+            className="text-slate-600 hover:text-blue-600 transition font-medium"
+          >
+            Inicio
+          </a>
           {isAuthenticated && (
             <a
               href="/eventos"
